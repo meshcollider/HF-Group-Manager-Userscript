@@ -26,23 +26,11 @@ function injectCSS(){
   GM_addStyle(groupNotice);
 }
 
-function replaceAll(str, find, replace) {
-  return str.replace(new RegExp(find, 'g'), replace);
-}
-
 function decodeHtmlNumeric(str) {
     return str.replace( /&#([0-9]{1,7});/g, function( g, m1 ){
         return String.fromCharCode( parseInt( m1, 10 ) );
     }).replace( /&#[xX]([0-9a-fA-F]{1,6});/g, function( g, m1 ){
         return String.fromCharCode( parseInt( m1, 16 ) );
-    });
-}
-
-function replaceAllMap(str,mapObj){
-    var re = new RegExp(Object.keys(mapObj).join("|"),"gi");
-    
-    return str.replace(re, function(matched){
-        return mapObj[matched];
     });
 }
     
