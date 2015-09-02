@@ -22,18 +22,6 @@ var groupNotice = [
     "margin-bottom: 15px;}",
     ].join("");
     
-function injectCSS(){
-  GM_addStyle(groupNotice);
-}
-
-function decodeHtmlNumeric(str) {
-    return str.replace( /&#([0-9]{1,7});/g, function( g, m1 ){
-        return String.fromCharCode( parseInt( m1, 10 ) );
-    }).replace( /&#[xX]([0-9a-fA-F]{1,6});/g, function( g, m1 ){
-        return String.fromCharCode( parseInt( m1, 16 ) );
-    });
-}
-    
 function trimString (str) {
     return str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
 }
@@ -206,7 +194,9 @@ function getProfileName(){
 }
 
 function main(){
-    injectCSS();
+    //inject css
+    GM_addStyle(groupNotice);
+    
     groupMessage();
     addSpecialLinks();
     
