@@ -14,7 +14,29 @@
 // @require     http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js
 // ==/UserScript==
 
-    
+var groupsLed = GM_getValue("groupsYouLead");
+
+function getGroupsLed() {
+    try{
+        GM_xmlhttpRequest({
+            method: "GET",
+            url: "http://www.hackforums.net/usercp.php?action=usergroups",
+            onload: function(response){
+
+                if(response.responseText.indexOf("Groups You Lead") == -1) {
+                    window.prompt("Press Ctrl+C to copy profile citation!","you are not a leader");
+                    return;
+                }
+
+                window.prompt("Press Ctrl+C to copy profile citation!","you are a leader");
+            },
+        });
+        GM_setValue("groupsYouLead", groupsLed);
+    }catch(err){
+        window.prompt("Something went wrong","test");
+    }
+}
+
 function trimString (str) {
     return str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
 }
@@ -191,6 +213,8 @@ function main(){
     groupMessage();
     addGroupLink();
     
+    getGroupsLed();
+    
     if(document.URL.indexOf('showgroups.php') != -1){
       //update group page
       //get all member UID and submit to server
@@ -203,5 +227,7 @@ function main(){
         //add "Blacklist from group" button
     }
 }
+
 GM_setValue("hideGroupMsg", false);
+
 main();
