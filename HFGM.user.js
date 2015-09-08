@@ -28,8 +28,6 @@ function getGroupsLed() {
         GM_setValue("lastCheckedLead", (new Date().getTime() / 1000) - 301);
     }
     
-    GM_setValue("lastCheckedLead", (new Date().getTime() / 1000) - 301);
-    
     if(GM_getValue("lastCheckedLead") <= ((new Date().getTime() / 1000) - 300)) { //5 minutes later
         GM_setValue("lastCheckedLead", (new Date().getTime() / 1000));
         
@@ -251,7 +249,5 @@ function main(){
         //add "Blacklist from group" button
     }
 }
-
-GM_setValue("hideGroupMsg", false);
 
 main();
