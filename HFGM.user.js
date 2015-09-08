@@ -14,26 +14,50 @@
 // @require     http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js
 // ==/UserScript==
 
-var groupsLed = GM_getValue("groupsYouLead");
+var groupsLed = [];
 
 function getGroupsLed() {
-    try{
-        GM_xmlhttpRequest({
-            method: "GET",
-            url: "http://www.hackforums.net/usercp.php?action=usergroups",
-            onload: function(response){
+    
+    groupsLedTemp = GM_getValue("groupsYouLead", "");
+    if(groupsLedTemp !== ""){
+        groupsLed = JSON.parse(groupsLedTemp);
+    }
+    
+    lastCheckedTemp = GM_getValue("lastCheckedLead", "");
+    if(lastCheckedTemp === ""){
+        GM_setValue("lastCheckedLead", (new Date().getTime() / 1000) - 301);
+    }
+    
+    GM_setValue("lastCheckedLead", (new Date().getTime() / 1000) - 301);
+    
+    if(GM_getValue("lastCheckedLead") <= ((new Date().getTime() / 1000) - 300)) { //5 minutes later
+        GM_setValue("lastCheckedLead", (new Date().getTime() / 1000));
+        
+        try{
+            GM_xmlhttpRequest({
+                method: "GET",
+                url: "http://www.hackforums.net/usercp.php?action=usergroups",
+                onload: function(response){
+                    
+                    groupsLed = [];
+                    GM_setValue("groupsYouLead", JSON.stringify(groupsLed));
+                    
+                    if(response.responseText.indexOf("managegroup.php?gid=") == -1) {                        
+                        return;
+                    } 
 
-                if(response.responseText.indexOf("Groups You Lead") == -1) {
-                    window.prompt("Press Ctrl+C to copy profile citation!","you are not a leader");
-                    return;
-                }
+                    var groupLinks = response.responseText.match(/managegroup\.php\?gid=[0-9]+/g); //get links with the formar managegroup.php?gid=XXX
+                    for(i = 0; i < groupLinks.length; i++){
+                        var groupID = groupLinks[i].split("=")[1];
+                        groupsLed.push(+groupID);
+                    }
+                },
+            });
+            GM_setValue("groupsYouLead", JSON.stringify(groupsLed));
 
-                window.prompt("Press Ctrl+C to copy profile citation!","you are a leader");
-            },
-        });
-        GM_setValue("groupsYouLead", groupsLed);
-    }catch(err){
-        window.prompt("Something went wrong","test");
+        }catch(err){
+            groupsLed = [];
+        }
     }
 }
 
@@ -200,7 +224,7 @@ function getProfileName(){
         usernameColor = '#EFEFEF';
     }
     profileGenerator = '[url='+document.URL+']';
-    if(usernameColor != ''){
+    if(usernameColor !== ''){
         profileGenerator = profileGenerator+'[color='+usernameColor+'][b]'+username+'[/b][/color][/url]';
     }else{
         profileGenerator = profileGenerator+'[b]'+username+'[/b][/url]';
