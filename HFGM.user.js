@@ -9,35 +9,27 @@
 // @grant       GM_xmlhttpRequest
 // @grant       GM_getValue
 // @grant       GM_setValue
+// @match        http://hackforums.net/*
+// @match        http://*.hackforums.net/*
+// @require     http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js
 // ==/UserScript==
 
-var groupNotice = [
-    ".group_alert {",
-    "background: #333333;",
-    "border-top: 1px solid #03e103;",
-    "border-bottom: 1px solid #03e103;",
-    "text-align: center;",
-    "padding: 5px 20px;",
-    "font-size: 11px;",
-    "margin-bottom: 15px;}",
-    ].join("");
     
 function trimString (str) {
     return str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
 }
 
 function addGroupLink() {
-  if(document.URL.indexOf("misc.php?action=buddypopup") != -1) {
+    if(document.URL.indexOf("showgroups.php") != -1) {
         return;
-  }
-  bodyList = document.getElementById('panel').innerHTML.split('\n');
-  for(i = 0; i < bodyList.length; i++){
-    if(bodyList[i].indexOf('buddypopup') != -1){
-      bodyList[i] = '<a href="/showgroups.php">Show Groups</a> | <a href="javascript:void(0);" id="buddylist">Buddy List</a>';
-      $("#buddylist").live("click", function(){window.open('/misc.php?action=buddypopup','HF Buddy List', 'height=350,width=350,resizable=0,location=0,left=0,top=0')});
-      document.getElementById('panel').innerHTML = bodyList.join('\n');
     }
-  }
+    bodyList = document.getElementById('panel').innerHTML.split('\n');
+    for(i = 0; i < bodyList.length; i++){
+        if(bodyList[i].indexOf('buddypopup') != -1){
+            bodyList[i] += ' | <a href="/showgroups.php">Show Groups</a>';
+            document.getElementById('panel').innerHTML = bodyList.join('\n');
+        }
+    }
 }
 
 function groupMessage(){
@@ -56,21 +48,22 @@ function groupMessage(){
 
                 GM_setValue("previousGroupMessage", response.responseText);
                 GM_setValue("hideGroupMsg", false);
-                hideButton = '<div class="float_right"><a href="javascript:void(0);" title="Dismiss this notice" id="hider"><img src="http://x.hackforums.net/images/modern_bl/dismiss_notice.gif" alt="Dismiss this notice" title="[x]"></a></div>';
+                hideButton = '<div class="float_right"><a href="javascript:void(0);" title="Dismiss this notice" id="hider"><img src="http://MeshCollider.github.io/images/close-icon.png" alt="Dismiss this notice" title="[x]"></a></div>';
                 groupHTML = '<br><div class="group_alert" id="group_msg"><div><strong>Group Manager Notice: </strong>' + newres.join(" | ") + hideButton + '</div></div>';
                 if(response.responseText != "\n"){
-                    $("#header").append(groupHTML);
+                        
+                    $("#header").append("<br /><div class='group_msg' id='group_msg' style='background:#333333;border-top: 1px solid #F4D639;border-bottom: 1px solid #F4D639;font-size:11px;padding:5px 20px;margin-bottom:15px;text-align:center;'>" + newres.join(" | ") + hideButton + "</div>");
                     $("#hider").live("click",function(){hideGroupMessage();});
                 }
             },
         });
     }catch(err){
-      //die quietly
+      window.prompt("Something went wrong","test");
     }
 }
 
 function hideGroupMessage(){
-    $(".group_alert").fadeOut();
+    $(".group_msg").fadeOut();
     GM_setValue("hideGroupMsg", true);
 }
 
@@ -194,11 +187,9 @@ function getProfileName(){
 }
 
 function main(){
-    //inject css
-    GM_addStyle(groupNotice);
     
     groupMessage();
-    addSpecialLinks();
+    addGroupLink();
     
     if(document.URL.indexOf('showgroups.php') != -1){
       //update group page
@@ -212,5 +203,5 @@ function main(){
         //add "Blacklist from group" button
     }
 }
-
+GM_setValue("hideGroupMsg", false);
 main();
