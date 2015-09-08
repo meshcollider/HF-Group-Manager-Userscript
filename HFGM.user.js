@@ -52,7 +52,7 @@ function groupMessage(){
                 groupHTML = '<br><div class="group_alert" id="group_msg"><div><strong>Group Manager Notice: </strong>' + newres.join(" | ") + hideButton + '</div></div>';
                 if(response.responseText != "\n"){
                         
-                    $("#header").append("<br /><div class='group_msg' id='group_msg' style='background:#333333;border-top: 1px solid #F4D639;border-bottom: 1px solid #F4D639;font-size:11px;padding:5px 20px;margin-bottom:15px;text-align:center;'>" + newres.join(" | ") + hideButton + "</div>");
+                    $("#header").append("<br /><div class='group_msg' id='group_msg' style='background:#333333;border-top: 1px solid #2af48a;border-bottom: 1px solid #2af48a;font-size:11px;padding:5px 20px;margin-bottom:15px;text-align:center;'>" + newres.join(" | ") + hideButton + "</div>");
                     $("#hider").live("click",function(){hideGroupMessage();});
                 }
             },
